@@ -32,23 +32,13 @@
                                     </mask>
                                 </variation>
                             </mapView>
-                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="joh-DY-4eD">
-                                <rect key="frame" x="0.0" y="64" width="600" height="44"/>
-                                <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="moa-UM-E7h"/>
-                                </connections>
-                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="joh-DY-4eD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="5UY-7U-Aox"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="U9f-5T-471"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="34" id="WdG-xQ-YKd"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Zcj-Qr-7Pd"/>
                             <constraint firstAttribute="centerY" secondItem="vMI-G0-IO6" secondAttribute="centerY" id="t7z-xs-P4h"/>
-                            <constraint firstItem="joh-DY-4eD" firstAttribute="centerX" secondItem="vMI-G0-IO6" secondAttribute="centerX" id="v98-Ki-UbW"/>
-                            <constraint firstItem="joh-DY-4eD" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="w6A-FX-qjQ"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="yCY-9h-DM1"/>
                         </constraints>
                         <variation key="default">
@@ -57,28 +47,12 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Title" id="RIn-yw-rxE">
-                        <barButtonItem key="rightBarButtonItem" systemItem="search" id="K8l-FW-ph5">
-                            <connections>
-                                <segue destination="MHL-vY-O0D" kind="show" id="iv7-p0-txy"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Title" id="RIn-yw-rxE"/>
                     <connections>
                         <outlet property="mapView" destination="vMI-G0-IO6" id="ATa-nL-Xyv"/>
-                        <outlet property="searchDisplayController" destination="vt8-N6-SrA" id="mhm-RU-nt9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <searchDisplayController id="vt8-N6-SrA">
-                    <connections>
-                        <outlet property="delegate" destination="BYZ-38-t0r" id="2aO-qb-LBc"/>
-                        <outlet property="searchBar" destination="joh-DY-4eD" id="jMz-bf-twy"/>
-                        <outlet property="searchContentsController" destination="BYZ-38-t0r" id="F7H-Gm-MvN"/>
-                        <outlet property="searchResultsDataSource" destination="BYZ-38-t0r" id="oHZ-wN-BUv"/>
-                        <outlet property="searchResultsDelegate" destination="BYZ-38-t0r" id="ShA-if-Pnk"/>
-                    </connections>
-                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="1141" y="185"/>
         </scene>
