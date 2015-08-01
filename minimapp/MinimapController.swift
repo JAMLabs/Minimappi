@@ -7,12 +7,19 @@
 //
 
 import UIKit
+import MapKit
+import QuartzCore
 
-class ViewController: UIViewController {
+class MinimapController: UIViewController {
 
+    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        self.view.backgroundColor = UIColor.grayColor()
+        mapView.layer.cornerRadius = 140.0
     }
 
     override func didReceiveMemoryWarning() {
