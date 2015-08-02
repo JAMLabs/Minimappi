@@ -9,11 +9,13 @@
 import UIKit
 import MapKit
 import QuartzCore
+import Alamofire
 
 class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate{
     
     @IBOutlet weak var searchTableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var addButton: UIButton!
     var searchBar = UISearchBar(frame: CGRectMake(0.0, 0.0, 350.0, 44.0))
     let kCellIdentifier = "cellIdentifier"
     var boundingRegion : MKCoordinateRegion = MKCoordinateRegion()
@@ -22,10 +24,14 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     var userLocation : CLLocationCoordinate2D = CLLocationCoordinate2D()
     var places = [MKMapItem]()
     var mapItemList = [MKMapItem]()
+    var tempAnnot : Annotation? = nil
+    
+    var targetList = [Annotation]()
+    var targetIconList = ["red_dot", "orange_dot", "yellow_dot", "green_dot", "cyan_dot", "purple_dot", "white_dot", "black_dot"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         self.view.backgroundColor = UIColor.grayColor()
         mapView.layer.cornerRadius = 140.0
         
@@ -34,10 +40,11 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         searchBarView.autoresizingMask = UIViewAutoresizing.allZeros
         searchBar.delegate = self
         searchBarView.addSubview(searchBar)
+        searchBar.showsCancelButton = true
         self.navigationItem.titleView = searchBarView;
         
-        var tapGest = UITapGestureRecognizer(target: self, action: "hideSearchBar")
-        self.view.addGestureRecognizer(tapGest)
+//        var tapGest = UITapGestureRecognizer(target: self, action: "hideSearchBar")
+//        self.view.addGestureRecognizer(tapGest)
         
         locationManager?.requestAlwaysAuthorization()
         
@@ -61,6 +68,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
             mapView.showsUserLocation = true
             mapView.setUserTrackingMode(MKUserTrackingMode.FollowWithHeading, animated: true)
             locationManager!.startUpdatingLocation()
+            locationManager!.startUpdatingHeading()
         }
 
     }
@@ -97,7 +105,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(kCellIdentifier, forIndexPath: indexPath) as! UITableViewCell
         
         var mapItem : MKMapItem = self.places[indexPath.row]
-        println("\(self.places)  \(mapItem)")
+        println("\(mapItem)")
         println("-----------------------------------------------------------")
         var placeStr = "\(mapItem.placemark)"
         var range = Range(start: placeStr.startIndex,
@@ -110,7 +118,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         var selectedItem : NSIndexPath = searchTableView.indexPathForSelectedRow()!
         var selectedMapItem = self.places[selectedItem.row]
-        
+        println("fhdksfhlh")
         searchBar.resignFirstResponder()
         searchTableView.hidden = true
         
@@ -118,15 +126,25 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         var annotation = Annotation()
         annotation.coordinate = selectedMapItem.placemark.location.coordinate
         annotation.title = selectedMapItem.name
-        annotation.url = selectedMapItem.url
         self.mapView.addAnnotation(annotation)
         
         // we have only one annotation, select it's callout
-        self.mapView.selectAnnotation(self.mapView.annotations[0] as! Annotation, animated: true)
+        self.mapView.selectAnnotation(annotation, animated: true)
         
         // center the region around this map item's coordinate
         self.mapView.centerCoordinate = selectedMapItem.placemark.coordinate
         println("\(selectedMapItem.placemark.coordinate.latitude) \(selectedMapItem.placemark.coordinate.longitude)")
+        
+        addButton.hidden = false
+        tempAnnot = annotation
+    }
+    
+    @IBAction func addButtonClicked(sender: AnyObject) {
+        targetList.append(tempAnnot!)
+        updateTargets()
+        addButton.hidden = true
+        tempAnnot = nil
+        mapView.setUserTrackingMode(MKUserTrackingMode.FollowWithHeading, animated: true)
     }
     
     func startSearch(searchString: String){
@@ -202,6 +220,44 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
         self.userLocation = (locations[0] as! CLLocation).coordinate
         print("\(self.userLocation.latitude), \(self.userLocation.longitude)")
+        
+        var locDictStr = "{\"X\":\(self.userLocation.latitude),\"Y\":\(self.userLocation.longitude)}"
+        Alamofire.request(.GET, "http://10.180.0.129:8080/push", parameters: ["location":locDictStr,"ID":"4834"]).response({ request, response, data, error in
+            println("Alamofire: \(request)")
+            println("Alamofire: \(response)")
+            println("Alamofire: \(error)")
+        })
+    }
+    
+    func locationManager(manager: CLLocationManager!, didUpdateHeading newHeading: CLHeading!) {
+        updateTargets()
+        println("Heading: \(locationManager?.heading.trueHeading)")
+        if(tempAnnot != nil){
+            var latDiff = tempAnnot!.coordinate.latitude-self.userLocation.latitude
+            var longDiff = tempAnnot!.coordinate.longitude-self.userLocation.longitude
+            println("LatDiff: \(latDiff)  LongDiff: \(longDiff)")
+            var angleFromHorizToTarget = atan(latDiff/longDiff) * (180.0/M_PI)
+            println("TargetHeading: \(angleFromHorizToTarget)")
+            
+            var realAngleFromNorthToTarget = 0.0
+            if(longDiff>0){
+                realAngleFromNorthToTarget = 90.0 - angleFromHorizToTarget
+            }
+            else{
+                realAngleFromNorthToTarget = 270.0 - angleFromHorizToTarget
+            }
+            
+            var relativeAngle = realAngleFromNorthToTarget - locationManager!.heading.trueHeading
+            if relativeAngle < 0{
+                relativeAngle += 360.0
+            }
+        }
+    }
+    
+    func updateTargets(){
+        for Annotation in targetList{
+
+        }
     }
 }
 
