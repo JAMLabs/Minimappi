@@ -25,6 +25,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     var places = [MKMapItem]()
     var mapItemList = [MKMapItem]()
     var tempAnnot : Annotation? = nil
+    var currentlyAdding = false
     
     @IBOutlet weak var drawingView: DrawingView!
     
@@ -138,15 +139,23 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         
         addButton.hidden = false
         tempAnnot = annotation
-        print("SET ANNOT")
+        print("SET ANNOT, \(annotation.title)")
+        currentlyAdding = true
+        drawingView.toDraw = false
+        drawingView.setNeedsDisplay()
+        
     }
     
     @IBAction func addButtonClicked(sender: AnyObject) {
         targetList.append(tempAnnot!)
         updateTargets()
+        self.mapView.removeAnnotation(tempAnnot)
         addButton.hidden = true
         tempAnnot = nil
+        currentlyAdding = false
         mapView.setUserTrackingMode(MKUserTrackingMode.FollowWithHeading, animated: true)
+        drawingView.toDraw = true
+        drawingView.setNeedsDisplay()
     }
     
     func startSearch(searchString: String){
@@ -179,10 +188,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
             }
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         }
-        
-        if(self.localSearch != nil){
-            self.locationManager = nil
-        }
+
         self.localSearch = MKLocalSearch(request: request)
         self.localSearch!.startWithCompletionHandler(completionHandler)
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
@@ -242,6 +248,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         println("into FOR")
         for annot in targetList{
             //        println("Heading: \(locationManager?.heading.trueHeading)")
+            print("\(annot.title) \(annot.coordinate.latitude) \(annot.coordinate.longitude) |u->| \(self.userLocation.latitude) \(self.userLocation.longitude)")
             var latDiff = annot.coordinate.latitude-self.userLocation.latitude
             var longDiff = annot.coordinate.longitude-self.userLocation.longitude
             //            println("LatDiff: \(latDiff)  LongDiff: \(longDiff)")
@@ -255,18 +262,37 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
             else{
                 realAngleFromNorthToTarget = 270.0 - angleFromHorizToTarget
             }
-            
+            print("beforeunwrap")
             var relativeAngle = realAngleFromNorthToTarget - locationManager!.heading.trueHeading
             if relativeAngle < 0{
                 relativeAngle += 360.0
             }
+            print("unwrap")
 //                println("ANGLE:  \(relativeAngle)")
-            var drawX = radius + radius * CGFloat(sin(relativeAngle * (M_PI / 180.0))) + 10.0
-            var drawY = radius - radius * CGFloat(cos(relativeAngle * (M_PI / 180.0))) + 10.0
+            
+            var dist = sqrt(pow(latDiff,2) + pow(longDiff,2))
+            println(dist)
+            
+            var drawX : CGFloat = 0.0
+            var drawY : CGFloat = 0.0
+            
+            let specialVal = 2.8 * 0.00215827429374711
+            
+            if(dist > specialVal){
+                drawX = radius + radius * CGFloat(sin(relativeAngle * (M_PI / 180.0))) + 10.0
+                drawY = radius - radius * CGFloat(cos(relativeAngle * (M_PI / 180.0))) + 10.0
+            }
+            else{
+                drawX = radius + radius * CGFloat(dist/specialVal) * CGFloat(sin(relativeAngle * (M_PI / 180.0))) + 10.0
+                drawY = radius - radius * CGFloat(dist/specialVal) * CGFloat(cos(relativeAngle * (M_PI / 180.0))) + 10.0
+            }
+            
             println("\(drawX) \(drawY) || \(relativeAngle)")
             drawingView.dotArray.append([drawX, drawY])
-            drawingView.toDraw = true
-            drawingView.setNeedsDisplay()
+            if !currentlyAdding{
+                drawingView.toDraw = true
+                drawingView.setNeedsDisplay()
+            }
         }
     }
     

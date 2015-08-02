@@ -15,11 +15,10 @@ class DrawingView: UIView {
     var toDraw = false
     
     override func drawRect(rect: CGRect) {
+        UIColor.clearColor().setFill()
+        UIRectFill(rect)
+        println("drawdraw")
         if toDraw{
-            UIColor.whiteColor().setFill()
-            UIRectFill(rect)
-            UIColor.clearColor().setFill()
-            UIRectFill(rect)
             println("fillclear")
             for(var i = 0; i < dotArray.count; i++){
                 var path = UIBezierPath(ovalInRect: CGRectMake(dotArray[i][0]-5.0, dotArray[i][1]-5.0, 20.0, 20.0))
