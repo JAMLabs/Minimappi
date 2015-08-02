@@ -26,14 +26,32 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     var mapItemList = [MKMapItem]()
     var tempAnnot : Annotation? = nil
     var currentlyAdding = false
+    var peopleLogged = Dictionary<String, NSInteger?>()
+    let uidString = UIDevice.currentDevice().identifierForVendor.UUIDString
+    var uidInt : UInt = 0
     
     @IBOutlet weak var drawingView: DrawingView!
+    
+    @IBOutlet weak var leafButton: UIButton!
+    @IBOutlet weak var shopButton: UIButton!
+    @IBOutlet weak var foodButton: UIButton!
+    @IBOutlet weak var carButton: UIButton!
+    @IBOutlet weak var starButton: UIButton!
+    @IBOutlet weak var miscButton: UIButton!
     
     var targetList = [Annotation]()
     var targetIconList = ["red_dot", "orange_dot", "yellow_dot", "green_dot", "cyan_dot", "purple_dot", "white_dot", "black_dot"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        var range = Range(start: uidString.rangeOfString("-", options:NSStringCompareOptions.BackwardsSearch)!.startIndex, end: uidString.endIndex)
+        var newUidString = uidString.substringWithRange(range)
+        newUidString = newUidString.substringFromIndex(advance(newUidString.startIndex, 1))
+        print(newUidString)
+        
+        uidInt = strtoul(newUidString, nil, 16)
+        print("LALALAL : \(uidInt)")
         
         self.view.backgroundColor = UIColor.grayColor()
         mapView.layer.cornerRadius = 140.0
@@ -54,7 +72,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         locationManager!.delegate = self
         locationManager!.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager!.distanceFilter = 100
-
+        
         mapView.delegate = self
         
         var authorizationStatus = CLLocationManager.authorizationStatus()
@@ -137,6 +155,10 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         self.mapView.centerCoordinate = selectedMapItem.placemark.coordinate
         println("\(selectedMapItem.placemark.coordinate.latitude) \(selectedMapItem.placemark.coordinate.longitude)")
         
+        searchBar.text = ""
+        self.places.removeAll(keepCapacity: false)
+        self.searchTableView.reloadData()
+        
         addButton.hidden = false
         tempAnnot = annotation
         print("SET ANNOT, \(annotation.title)")
@@ -147,15 +169,53 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     }
     
     @IBAction func addButtonClicked(sender: AnyObject) {
-        targetList.append(tempAnnot!)
-        updateTargets()
-        self.mapView.removeAnnotation(tempAnnot)
-        addButton.hidden = true
-        tempAnnot = nil
-        currentlyAdding = false
-        mapView.setUserTrackingMode(MKUserTrackingMode.FollowWithHeading, animated: true)
-        drawingView.toDraw = true
-        drawingView.setNeedsDisplay()
+        let centerframe = CGRectMake(166.0, 560.0, 50.0, 50.0)
+        let gotoCarFrame = carButton.frame
+        let startCarFrame = centerframe
+        carButton.frame = startCarFrame
+        
+        let gotoStarFrame = starButton.frame
+        let startStarFrame = centerframe
+        starButton.frame = startStarFrame
+        
+        let gotoMiscFrame = miscButton.frame
+        let startMiscFrame = centerframe
+        miscButton.frame = startMiscFrame
+        
+        let gotoFoodFrame = foodButton.frame
+        let startFoodFrame = centerframe
+        foodButton.frame = startFoodFrame
+        
+        let gotoLeafFrame = leafButton.frame
+        let startLeafFrame = centerframe
+        leafButton.frame = startLeafFrame
+        
+        let gotoShopFrame = shopButton.frame
+        let startShopFrame = centerframe
+        shopButton.frame = startShopFrame
+        
+        miscButton.transform = CGAffineTransformMakeScale(1.0,1.0);
+        starButton.transform = CGAffineTransformMakeScale(1.0,1.0);
+        carButton.transform = CGAffineTransformMakeScale(1.0,1.0);
+        foodButton.transform = CGAffineTransformMakeScale(1.0,1.0);
+        leafButton.transform = CGAffineTransformMakeScale(1.0,1.0);
+        shopButton.transform = CGAffineTransformMakeScale(1.0,1.0);
+        
+        UIView.animateWithDuration(0.3, animations: {
+            self.carButton.frame = gotoCarFrame
+            self.carButton.hidden = false
+            self.foodButton.frame = gotoFoodFrame
+            self.foodButton.hidden = false
+            self.leafButton.frame = gotoLeafFrame
+            self.leafButton.hidden = false
+            self.shopButton.frame = gotoShopFrame
+            self.shopButton.hidden = false
+            self.starButton.frame = gotoStarFrame
+            self.starButton.hidden = false
+            self.miscButton.frame = gotoMiscFrame
+            self.miscButton.hidden = false
+        })
+        
     }
     
     func startSearch(searchString: String){
@@ -194,6 +254,50 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
     }
     
+    @IBAction func iconButtonClicked(sender: AnyObject) {
+        
+        UIView.animateWithDuration(0.3, animations: {
+            self.carButton.hidden = true
+            self.foodButton.hidden = true
+            self.leafButton.hidden = true
+            self.shopButton.hidden = true
+            self.starButton.hidden = true
+            self.miscButton.hidden = true
+            (sender as! UIButton).transform = CGAffineTransformMakeScale(1.5,1.5);
+        })
+        
+        if(sender as! UIButton == self.carButton){
+            tempAnnot!.img = UIImage(named: "car_button")!
+        }
+        else if(sender as! UIButton == self.foodButton){
+            tempAnnot!.img = UIImage(named: "food_button")!
+        }
+        else if(sender as! UIButton == self.starButton){
+            tempAnnot!.img = UIImage(named: "star_button")!
+        }
+        else if(sender as! UIButton == self.leafButton){
+            tempAnnot!.img = UIImage(named: "leaf_button")!
+        }
+        else if(sender as! UIButton == self.shopButton){
+            tempAnnot!.img = UIImage(named: "shop_button")!
+        }
+        else{
+            tempAnnot!.img = UIImage(named: "misc_button")!
+        }
+        
+        self.mapView.removeAnnotation(tempAnnot)
+        addButton.hidden = true
+        currentlyAdding = false
+        mapView.setUserTrackingMode(MKUserTrackingMode.FollowWithHeading, animated: true)
+        
+        targetList.append(tempAnnot!)
+        tempAnnot = nil
+        drawingView.toDraw = true
+        drawingView.setNeedsDisplay()
+        updateTargets()
+    }
+    
+    
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         var causeStr : String? = nil
@@ -230,7 +334,8 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         print("\(self.userLocation.latitude), \(self.userLocation.longitude)")
         
         var locDictStr = "{\"X\":\(self.userLocation.latitude),\"Y\":\(self.userLocation.longitude)}"
-        Alamofire.request(.GET, "http://10.180.0.129:8080/push", parameters: ["location":locDictStr,"ID":"4834"]).response({ request, response, data, error in
+        
+        Alamofire.request(.GET, "http://10.180.0.129:8080/push", parameters: ["location":locDictStr,"ID":uidInt]).response({ request, response, data, error in
             println("Alamofire: \(request)")
             println("Alamofire: \(response)")
             println("Alamofire: \(error)")
@@ -245,10 +350,36 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         let centerX = mapView.frame.width/2 + mapView.frame.origin.x
         let centerY = mapView.frame.height/2 + mapView.frame.origin.y
         let radius = mapView.frame.width/2
-        println("into FOR")
+        
+        drawingView.dotArray.removeAll(keepCapacity: false)
+        drawingView.imgArray.removeAll(keepCapacity: false)
+        
+        Alamofire.request(.GET, "http://10.180.0.129:8080/get", parameters:nil).response({ request, response, data, error in
+
+            let json = JSON(data: data!)
+            
+            for (userKey : String, subJSON: JSON) in json{
+                var annotPerson = Annotation()
+                annotPerson.coordinate = CLLocationCoordinate2DMake(subJSON["X"].double!, subJSON["Y"].double!)
+                annotPerson.title = "Another User"
+                annotPerson.img = UIImage(named:"person_icon")!
+                println(userKey)
+                if let val = self.peopleLogged[userKey]{
+                    self.targetList[val!] = annotPerson
+                }
+                else{
+                    print("===   \(userKey != String(self.uidInt))   ===")
+                    if userKey != String(self.uidInt){
+                        self.targetList.append(annotPerson)
+                        self.peopleLogged[userKey] = self.targetList.count - 1
+                    }
+                }
+            }
+        })
+        
         for annot in targetList{
             //        println("Heading: \(locationManager?.heading.trueHeading)")
-            print("\(annot.title) \(annot.coordinate.latitude) \(annot.coordinate.longitude) |u->| \(self.userLocation.latitude) \(self.userLocation.longitude)")
+//            print("\(annot.title) \(annot.coordinate.latitude) \(annot.coordinate.longitude) |u->| \(self.userLocation.latitude) \(self.userLocation.longitude)")
             var latDiff = annot.coordinate.latitude-self.userLocation.latitude
             var longDiff = annot.coordinate.longitude-self.userLocation.longitude
             //            println("LatDiff: \(latDiff)  LongDiff: \(longDiff)")
@@ -262,16 +393,16 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
             else{
                 realAngleFromNorthToTarget = 270.0 - angleFromHorizToTarget
             }
-            print("beforeunwrap")
+//            print("beforeunwrap")
             var relativeAngle = realAngleFromNorthToTarget - locationManager!.heading.trueHeading
             if relativeAngle < 0{
                 relativeAngle += 360.0
             }
-            print("unwrap")
+//            print("unwrap")
 //                println("ANGLE:  \(relativeAngle)")
             
             var dist = sqrt(pow(latDiff,2) + pow(longDiff,2))
-            println(dist)
+//            println(dist)
             
             var drawX : CGFloat = 0.0
             var drawY : CGFloat = 0.0
@@ -287,8 +418,10 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
                 drawY = radius - radius * CGFloat(dist/specialVal) * CGFloat(cos(relativeAngle * (M_PI / 180.0))) + 10.0
             }
             
-            println("\(drawX) \(drawY) || \(relativeAngle)")
+//            println("\(drawX) \(drawY) || \(relativeAngle)")
+            
             drawingView.dotArray.append([drawX, drawY])
+            drawingView.imgArray.append(annot.img)
             if !currentlyAdding{
                 drawingView.toDraw = true
                 drawingView.setNeedsDisplay()

@@ -12,4 +12,5 @@ import MapKit
 class Annotation : NSObject, MKAnnotation {
     var coordinate = CLLocationCoordinate2D()
     var title = ""
+    var img = UIImage()
 }

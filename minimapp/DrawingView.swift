@@ -12,18 +12,15 @@ import UIKit
 class DrawingView: UIView {
     
     var dotArray = [[CGFloat]]()
+    var imgArray = [UIImage]()
     var toDraw = false
     
     override func drawRect(rect: CGRect) {
         UIColor.clearColor().setFill()
         UIRectFill(rect)
-        println("drawdraw")
         if toDraw{
-            println("fillclear")
             for(var i = 0; i < dotArray.count; i++){
-                var path = UIBezierPath(ovalInRect: CGRectMake(dotArray[i][0]-5.0, dotArray[i][1]-5.0, 20.0, 20.0))
-                UIColor.greenColor().setFill()
-                path.fill()
+                imgArray[i].drawInRect(CGRectMake(dotArray[i][0]-10.0, dotArray[i][1]-10.0, 40.0, 40.0))
             }
             dotArray.removeAll(keepCapacity: false)
         }

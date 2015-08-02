@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>F6AF7A83-E971-456B-9933-522DC2C4064B</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>minimapp</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>4DCC6458DB006640398E7067427AB21FBFE81144</key>
 		<string>https://github.com/JAMLabs/Minimappi.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>minimapp.xcodeproj/project.xcworkspace</string>
+	<string>minimapp.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>4DCC6458DB006640398E7067427AB21FBFE81144</key>
