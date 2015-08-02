@@ -32,6 +32,14 @@
                                     </mask>
                                 </variation>
                             </mapView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vF3-C1-VXR" customClass="DrawingView" customModule="minimapp" customModuleProvider="target">
+                                <rect key="frame" x="32" y="180" width="320" height="320"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="320" id="DnW-FD-Baf"/>
+                                    <constraint firstAttribute="width" constant="320" id="hFD-XF-rcm"/>
+                                </constraints>
+                            </view>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8NW-9e-Qu2">
                                 <rect key="frame" x="250" y="420" width="100" height="100"/>
                                 <constraints>
@@ -65,6 +73,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="vF3-C1-VXR" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="180" id="6pf-ph-X20"/>
                             <constraint firstItem="8NW-9e-Qu2" firstAttribute="centerX" secondItem="vMI-G0-IO6" secondAttribute="centerX" id="Lea-qQ-iZq"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="8NW-9e-Qu2" secondAttribute="bottom" constant="80" id="MCV-Xa-m8A"/>
                             <constraint firstItem="gQR-aJ-BkU" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Sd2-Nf-dho"/>
@@ -75,6 +84,7 @@
                             <constraint firstItem="gQR-aJ-BkU" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ceJ-ug-ItB"/>
                             <constraint firstItem="gQR-aJ-BkU" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="fK8-Vj-fAg"/>
                             <constraint firstItem="gQR-aJ-BkU" firstAttribute="centerX" secondItem="vMI-G0-IO6" secondAttribute="centerX" id="loH-At-YIk"/>
+                            <constraint firstItem="vF3-C1-VXR" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="16" id="rZs-Xr-0V1"/>
                             <constraint firstAttribute="centerY" secondItem="vMI-G0-IO6" secondAttribute="centerY" id="t7z-xs-P4h"/>
                             <constraint firstItem="8NW-9e-Qu2" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="356" id="xmK-EC-A48"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="yCY-9h-DM1"/>
@@ -89,6 +99,7 @@
                     <navigationItem key="navigationItem" title="Title" id="RIn-yw-rxE"/>
                     <connections>
                         <outlet property="addButton" destination="8NW-9e-Qu2" id="Hrq-4q-pSG"/>
+                        <outlet property="drawingView" destination="vF3-C1-VXR" id="ZmD-l3-Fe7"/>
                         <outlet property="mapView" destination="vMI-G0-IO6" id="ATa-nL-Xyv"/>
                         <outlet property="searchTableView" destination="gQR-aJ-BkU" id="YdV-c6-bZ0"/>
                     </connections>

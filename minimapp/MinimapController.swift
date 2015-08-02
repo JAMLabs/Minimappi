@@ -26,6 +26,8 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     var mapItemList = [MKMapItem]()
     var tempAnnot : Annotation? = nil
     
+    @IBOutlet weak var drawingView: DrawingView!
+    
     var targetList = [Annotation]()
     var targetIconList = ["red_dot", "orange_dot", "yellow_dot", "green_dot", "cyan_dot", "purple_dot", "white_dot", "black_dot"]
     
@@ -70,7 +72,6 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
             locationManager!.startUpdatingLocation()
             locationManager!.startUpdatingHeading()
         }
-
     }
     
     override func didReceiveMemoryWarning() {
@@ -137,6 +138,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         
         addButton.hidden = false
         tempAnnot = annotation
+        print("SET ANNOT")
     }
     
     @IBAction func addButtonClicked(sender: AnyObject) {
@@ -231,13 +233,20 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     
     func locationManager(manager: CLLocationManager!, didUpdateHeading newHeading: CLHeading!) {
         updateTargets()
-        println("Heading: \(locationManager?.heading.trueHeading)")
-        if(tempAnnot != nil){
-            var latDiff = tempAnnot!.coordinate.latitude-self.userLocation.latitude
-            var longDiff = tempAnnot!.coordinate.longitude-self.userLocation.longitude
-            println("LatDiff: \(latDiff)  LongDiff: \(longDiff)")
+    }
+    
+    func updateTargets(){
+        let centerX = mapView.frame.width/2 + mapView.frame.origin.x
+        let centerY = mapView.frame.height/2 + mapView.frame.origin.y
+        let radius = mapView.frame.width/2
+        println("into FOR")
+        for annot in targetList{
+            //        println("Heading: \(locationManager?.heading.trueHeading)")
+            var latDiff = annot.coordinate.latitude-self.userLocation.latitude
+            var longDiff = annot.coordinate.longitude-self.userLocation.longitude
+            //            println("LatDiff: \(latDiff)  LongDiff: \(longDiff)")
             var angleFromHorizToTarget = atan(latDiff/longDiff) * (180.0/M_PI)
-            println("TargetHeading: \(angleFromHorizToTarget)")
+            //            println("TargetHeading: \(angleFromHorizToTarget)")
             
             var realAngleFromNorthToTarget = 0.0
             if(longDiff>0){
@@ -251,14 +260,17 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
             if relativeAngle < 0{
                 relativeAngle += 360.0
             }
+//                println("ANGLE:  \(relativeAngle)")
+            var drawX = radius + radius * CGFloat(sin(relativeAngle * (M_PI / 180.0))) + 10.0
+            var drawY = radius - radius * CGFloat(cos(relativeAngle * (M_PI / 180.0))) + 10.0
+            println("\(drawX) \(drawY) || \(relativeAngle)")
+            drawingView.dotArray.append([drawX, drawY])
+            drawingView.toDraw = true
+            drawingView.setNeedsDisplay()
         }
     }
     
-    func updateTargets(){
-        for Annotation in targetList{
 
-        }
-    }
 }
 
 
