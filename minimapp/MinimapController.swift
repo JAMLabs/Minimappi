@@ -10,23 +10,25 @@ import UIKit
 import MapKit
 import QuartzCore
 
-class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManagerDelegate {
-
-    @IBOutlet weak var mapView: MKMapView!
-    var searchBar = UISearchBar(frame: CGRectMake(-5.0, 0.0, 320.0, 44.0))
+class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate{
     
+    @IBOutlet weak var searchTableView: UITableView!
+    @IBOutlet weak var mapView: MKMapView!
+    var searchBar = UISearchBar(frame: CGRectMake(0.0, 0.0, 350.0, 44.0))
+    let kCellIdentifier = "cellIdentifier"
     var boundingRegion : MKCoordinateRegion = MKCoordinateRegion()
-    var localSearch : MKLocalSearch = MKLocalSearch()
-    var locationManager : CLLocationManager = CLLocationManager()
+    var localSearch : MKLocalSearch? = nil
+    var locationManager : CLLocationManager? = CLLocationManager()
     var userLocation : CLLocationCoordinate2D = CLLocationCoordinate2D()
+    var places = [MKMapItem]()
+    var mapItemList = [MKMapItem]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+    
         self.view.backgroundColor = UIColor.grayColor()
         mapView.layer.cornerRadius = 140.0
         
-
         searchBar.autoresizingMask = UIViewAutoresizing.FlexibleWidth
         var searchBarView = UIView(frame: CGRectMake(0.0, 0.0, 340.0, 44.0))
         searchBarView.autoresizingMask = UIViewAutoresizing.allZeros
@@ -37,19 +39,171 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         var tapGest = UITapGestureRecognizer(target: self, action: "hideSearchBar")
         self.view.addGestureRecognizer(tapGest)
         
-        locationManager.delegate = self
-        locationManager.startUpdatingHeading()
-        locationManager.startUpdatingLocation()
-    }
+        locationManager?.requestAlwaysAuthorization()
+        
+        locationManager!.delegate = self
+        locationManager!.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager!.distanceFilter = 100
 
+        mapView.delegate = self
+        
+        var authorizationStatus = CLLocationManager.authorizationStatus()
+        println(authorizationStatus == CLAuthorizationStatus.AuthorizedAlways)
+        println(authorizationStatus == CLAuthorizationStatus.AuthorizedWhenInUse)
+        println(authorizationStatus == CLAuthorizationStatus.Denied)
+        println(authorizationStatus == CLAuthorizationStatus.NotDetermined)
+        println(authorizationStatus == CLAuthorizationStatus.Restricted)
+        
+        
+        if (authorizationStatus == CLAuthorizationStatus.AuthorizedAlways ||
+            authorizationStatus == CLAuthorizationStatus.AuthorizedWhenInUse) {
+            println("yeyseysyeysy")
+            mapView.showsUserLocation = true
+            mapView.setUserTrackingMode(MKUserTrackingMode.FollowWithHeading, animated: true)
+            locationManager!.startUpdatingLocation()
+        }
+
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    func hideSearchBar(){
-        searchBar.resignFirstResponder()
+    
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        searchTableView.hidden = false
     }
     
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        searchTableView.hidden = true
+        println("cancel!")
+    }
+    
+    func hideSearchBar(){
+        searchBar.resignFirstResponder()
+        searchTableView.hidden = true
+        searchBar.text = ""
+    }
+    
+    //---------------------------------------
+    //---------------------------------------
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.places.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(kCellIdentifier, forIndexPath: indexPath) as! UITableViewCell
+        
+        var mapItem : MKMapItem = self.places[indexPath.row]
+        println("\(self.places)  \(mapItem)")
+        println("-----------------------------------------------------------")
+        var placeStr = "\(mapItem.placemark)"
+        var range = Range(start: placeStr.startIndex,
+            end: placeStr.rangeOfString("@")!.startIndex)
+        placeStr = placeStr.substringWithRange(range)
+        cell.textLabel!.text = placeStr
+        return cell
+    }
+
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        var selectedItem : NSIndexPath = searchTableView.indexPathForSelectedRow()!
+        var selectedMapItem = self.places[selectedItem.row]
+        
+        searchBar.resignFirstResponder()
+        searchTableView.hidden = true
+        
+        // add the single annotation to our map
+        var annotation = Annotation()
+        annotation.coordinate = selectedMapItem.placemark.location.coordinate
+        annotation.title = selectedMapItem.name
+        annotation.url = selectedMapItem.url
+        self.mapView.addAnnotation(annotation)
+        
+        // we have only one annotation, select it's callout
+        self.mapView.selectAnnotation(self.mapView.annotations[0] as! Annotation, animated: true)
+        
+        // center the region around this map item's coordinate
+        self.mapView.centerCoordinate = selectedMapItem.placemark.coordinate
+        println("\(selectedMapItem.placemark.coordinate.latitude) \(selectedMapItem.placemark.coordinate.longitude)")
+    }
+    
+    func startSearch(searchString: String){
+        if(self.localSearch != nil && self.localSearch!.searching){
+            self.localSearch!.cancel()
+        }
+        
+        var newRegion = MKCoordinateRegion()
+        newRegion.center.latitude = self.userLocation.latitude
+        newRegion.center.longitude = self.userLocation.longitude
+        
+        newRegion.span.latitudeDelta = 0.112872
+        newRegion.span.longitudeDelta = 0.109863
+        
+        var request = MKLocalSearchRequest()
+        request.naturalLanguageQuery = searchString
+        request.region = newRegion
+        println("\(newRegion.center.latitude), \(newRegion.center.longitude)")
+        
+        var completionHandler : MKLocalSearchCompletionHandler = { (response: MKLocalSearchResponse?, error : NSError?) in
+            if( error != nil ){
+                var errorStr: AnyObject? = error!.userInfo?[NSLocalizedDescriptionKey]
+                var alert = UIAlertView(title: "Could not find places", message: errorStr as? String, delegate: nil, cancelButtonTitle: "OK")
+                alert.show()
+            }
+            else{
+                self.places = response?.mapItems as! [MKMapItem]
+                self.boundingRegion = response!.boundingRegion
+                self.searchTableView.reloadData()
+            }
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        }
+        
+        if(self.localSearch != nil){
+            self.locationManager = nil
+        }
+        self.localSearch = MKLocalSearch(request: request)
+        self.localSearch!.startWithCompletionHandler(completionHandler)
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        var causeStr : String? = nil
+        if(CLLocationManager.locationServicesEnabled() == false){
+            causeStr = "device"
+        }
+        else if(CLLocationManager.authorizationStatus() == CLAuthorizationStatus.Denied){
+            causeStr = "app"
+        }
+        else{
+            self.startSearch(searchBar.text)
+        }
+        
+        if(causeStr != nil){
+            var alertMessage = NSString(format: "You currently have location services disabled for this %@. Please refer to \"Settings\" app to turn on Location Services.", causeStr!)
+            var servicesDisabledAlert = UIAlertView(title: "Location Services Disabled", message: alertMessage as String, delegate: nil, cancelButtonTitle: "OK")
+            servicesDisabledAlert.show()
+        }
+    }
+    
+    func locationManager(manager: CLLocationManager!, didUpdateToLocation newLocation: CLLocation!, fromLocation oldLocation: CLLocation!) {
+        self.userLocation = newLocation.coordinate
+        manager.stopUpdatingLocation()
+        manager.delegate = nil
+    }
+    
+    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
+            // report any errors returned back from Location Services
+        print(NSError)
+    }
+    
+    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+        self.userLocation = (locations[0] as! CLLocation).coordinate
+        print("\(self.userLocation.latitude), \(self.userLocation.longitude)")
+    }
 }
+
+
 

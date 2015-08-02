@@ -32,12 +32,33 @@
                                     </mask>
                                 </variation>
                             </mapView>
+                            <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="gQR-aJ-BkU">
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cellIdentifier" id="r4O-K7-Unu">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="r4O-K7-Unu" id="qo3-TY-bjH">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <sections/>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="zXH-EQ-xWy"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="qju-JM-l6y"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="gQR-aJ-BkU" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Sd2-Nf-dho"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="U9f-5T-471"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="34" id="WdG-xQ-YKd"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Zcj-Qr-7Pd"/>
+                            <constraint firstItem="gQR-aJ-BkU" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ceJ-ug-ItB"/>
+                            <constraint firstItem="gQR-aJ-BkU" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="fK8-Vj-fAg"/>
+                            <constraint firstItem="gQR-aJ-BkU" firstAttribute="centerX" secondItem="vMI-G0-IO6" secondAttribute="centerX" id="loH-At-YIk"/>
                             <constraint firstAttribute="centerY" secondItem="vMI-G0-IO6" secondAttribute="centerY" id="t7z-xs-P4h"/>
                             <constraint firstItem="vMI-G0-IO6" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="yCY-9h-DM1"/>
                         </constraints>
@@ -50,6 +71,7 @@
                     <navigationItem key="navigationItem" title="Title" id="RIn-yw-rxE"/>
                     <connections>
                         <outlet property="mapView" destination="vMI-G0-IO6" id="ATa-nL-Xyv"/>
+                        <outlet property="searchTableView" destination="gQR-aJ-BkU" id="YdV-c6-bZ0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

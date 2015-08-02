@@ -14,6 +14,7 @@
 		D927B5FF1B6D4D8200CCB599 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D927B5FD1B6D4D8200CCB599 /* LaunchScreen.xib */; };
 		D927B60B1B6D4D8200CCB599 /* minimappTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D927B60A1B6D4D8200CCB599 /* minimappTests.swift */; };
 		D927B6151B6D509800CCB599 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D927B6141B6D509800CCB599 /* MapKit.framework */; };
+		D927B6171B6DA80500CCB599 /* Annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D927B6161B6DA80500CCB599 /* Annotation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		D927B6091B6D4D8200CCB599 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D927B60A1B6D4D8200CCB599 /* minimappTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = minimappTests.swift; sourceTree = "<group>"; };
 		D927B6141B6D509800CCB599 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		D927B6161B6DA80500CCB599 /* Annotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +85,7 @@
 			children = (
 				D927B5F41B6D4D8200CCB599 /* AppDelegate.swift */,
 				D927B5F61B6D4D8200CCB599 /* MinimapController.swift */,
+				D927B6161B6DA80500CCB599 /* Annotation.swift */,
 				D927B5F81B6D4D8200CCB599 /* Main.storyboard */,
 				D927B5FB1B6D4D8200CCB599 /* Images.xcassets */,
 				D927B5FD1B6D4D8200CCB599 /* LaunchScreen.xib */,
@@ -217,6 +220,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D927B5F71B6D4D8200CCB599 /* MinimapController.swift in Sources */,
+				D927B6171B6DA80500CCB599 /* Annotation.swift in Sources */,
 				D927B5F51B6D4D8200CCB599 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
