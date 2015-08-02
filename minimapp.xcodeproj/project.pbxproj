@@ -19,7 +19,6 @@
 		D927B6331B6DD02700CCB599 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D927B6321B6DD02700CCB599 /* DrawingView.swift */; };
 		D927B6341B6E192D00CCB599 /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D927B6301B6DC86B00CCB599 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D927B6361B6E28F200CCB599 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = D927B6351B6E28F200CCB599 /* SwiftyJSON.swift */; };
-		D927B6371B6E3F9B00CCB599 /* Alamofire.framework in Sources */ = {isa = PBXBuildFile; fileRef = D927B6301B6DC86B00CCB599 /* Alamofire.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +61,7 @@
 		D927B6301B6DC86B00CCB599 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/minimapp-dockpedlcjjoqsdyxhnbfxjhabau/Build/Products/Debug-iphoneos/Alamofire.framework"; sourceTree = "<group>"; };
 		D927B6321B6DD02700CCB599 /* DrawingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		D927B6351B6E28F200CCB599 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftyJSON.swift; path = "../../../../Downloads/SwiftyJSON-master/Source/SwiftyJSON.swift"; sourceTree = "<group>"; };
+		D9F159161B6E688400991795 /* Quicksand_Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Quicksand_Bold.otf; path = ../../../../Library/Fonts/Quicksand_Bold.otf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +113,7 @@
 				D927B6321B6DD02700CCB599 /* DrawingView.swift */,
 				D927B6161B6DA80500CCB599 /* Annotation.swift */,
 				D927B5F81B6D4D8200CCB599 /* Main.storyboard */,
+				D9F159171B6E688900991795 /* Resources */,
 				D927B5FB1B6D4D8200CCB599 /* Images.xcassets */,
 				D927B5FD1B6D4D8200CCB599 /* LaunchScreen.xib */,
 				D927B5F21B6D4D8200CCB599 /* Supporting Files */,
@@ -143,6 +144,14 @@
 				D927B6091B6D4D8200CCB599 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D9F159171B6E688900991795 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D9F159161B6E688400991795 /* Quicksand_Bold.otf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -190,11 +199,13 @@
 		D927B5E71B6D4D8200CCB599 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = acerio;
 				TargetAttributes = {
 					D927B5EE1B6D4D8200CCB599 = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = S2TX67C7R9;
 					};
 					D927B6031B6D4D8200CCB599 = {
 						CreatedOnToolsVersion = 6.4;
@@ -246,7 +257,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D927B6371B6E3F9B00CCB599 /* Alamofire.framework in Sources */,
 				D927B5F71B6D4D8200CCB599 /* MinimapController.swift in Sources */,
 				D927B6171B6DA80500CCB599 /* Annotation.swift in Sources */,
 				D927B5F51B6D4D8200CCB599 /* AppDelegate.swift in Sources */,
@@ -380,6 +390,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/minimapp-dockpedlcjjoqsdyxhnbfxjhabau/Build/Products/Debug-iphoneos",
@@ -387,6 +399,8 @@
 				INFOPLIST_FILE = minimapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -394,6 +408,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/minimapp-dockpedlcjjoqsdyxhnbfxjhabau/Build/Products/Debug-iphoneos",
@@ -401,6 +417,8 @@
 				INFOPLIST_FILE = minimapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

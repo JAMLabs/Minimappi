@@ -16,7 +16,8 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     @IBOutlet weak var searchTableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var addButton: UIButton!
-    var searchBar = UISearchBar(frame: CGRectMake(0.0, 0.0, 350.0, 44.0))
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     let kCellIdentifier = "cellIdentifier"
     var boundingRegion : MKCoordinateRegion = MKCoordinateRegion()
     var localSearch : MKLocalSearch? = nil
@@ -30,6 +31,8 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     let uidString = UIDevice.currentDevice().identifierForVendor.UUIDString
     var uidInt : UInt = 0
     
+    @IBOutlet weak var superEdgeView: UIView!
+    @IBOutlet weak var edgeView: UIView!
     @IBOutlet weak var drawingView: DrawingView!
     
     @IBOutlet weak var leafButton: UIButton!
@@ -44,25 +47,43 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.view.backgroundColor = UIColor(patternImage: UIImage(named:"background3")!)
         var range = Range(start: uidString.rangeOfString("-", options:NSStringCompareOptions.BackwardsSearch)!.startIndex, end: uidString.endIndex)
         var newUidString = uidString.substringWithRange(range)
         newUidString = newUidString.substringFromIndex(advance(newUidString.startIndex, 1))
         print(newUidString)
         
         uidInt = strtoul(newUidString, nil, 16)
-        print("LALALAL : \(uidInt)")
         
-        self.view.backgroundColor = UIColor.grayColor()
-        mapView.layer.cornerRadius = 140.0
+        mapView.layer.cornerRadius = 150.0
+        edgeView.layer.cornerRadius = 160.0
+        superEdgeView.layer.cornerRadius = 175.0
         
         searchBar.autoresizingMask = UIViewAutoresizing.FlexibleWidth
-        var searchBarView = UIView(frame: CGRectMake(0.0, 0.0, 340.0, 44.0))
-        searchBarView.autoresizingMask = UIViewAutoresizing.allZeros
         searchBar.delegate = self
-        searchBarView.addSubview(searchBar)
-        searchBar.showsCancelButton = true
-        self.navigationItem.titleView = searchBarView;
+        searchBar.showsCancelButton = false
+        
+        var logo = UILabel(frame: CGRectMake(400.0, 0.0, 400.0, 40.0))
+        logo.autoresizingMask = (UIViewAutoresizing.FlexibleLeftMargin   |
+            UIViewAutoresizing.FlexibleRightMargin)
+//        
+//        let familyNames = UIFont.familyNames()
+//        for (var i = 0; i < familyNames.count; i++){
+//            println(familyNames[i])
+//            let familyNamess = UIFont.fontNamesForFamilyName(familyNames[i] as! String)
+//            for(var j = 0; j < familyNamess.count; j++){
+//                println(familyNamess[j])
+//            }
+//        }
+        
+        var attrText : NSMutableAttributedString = NSMutableAttributedString(string: "minimapp")
+        
+        attrText.addAttribute(NSFontAttributeName, value: UIFont(name: "HelveticaNeue-Thin", size: 40.0)!, range: NSRange(location:0,length:8))
+        attrText.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGrayColor(), range: NSRange(location:0,length:4))
+        attrText.addAttribute(NSForegroundColorAttributeName, value: UIColor.blueColor(), range: NSRange(location:4,length:4))
+
+        logo.attributedText = attrText
+        self.navigationItem.titleView = logo
         
 //        var tapGest = UITapGestureRecognizer(target: self, action: "hideSearchBar")
 //        self.view.addGestureRecognizer(tapGest)
@@ -100,18 +121,21 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         searchTableView.hidden = false
+        searchBar.showsCancelButton = true
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         searchTableView.hidden = true
         println("cancel!")
+        searchBar.showsCancelButton = false
     }
     
     func hideSearchBar(){
         searchBar.resignFirstResponder()
         searchTableView.hidden = true
         searchBar.text = ""
+        searchBar.showsCancelButton = false
     }
     
     //---------------------------------------
@@ -153,7 +177,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         
         // center the region around this map item's coordinate
         self.mapView.centerCoordinate = selectedMapItem.placemark.coordinate
-        println("\(selectedMapItem.placemark.coordinate.latitude) \(selectedMapItem.placemark.coordinate.longitude)")
+//        println("\(selectedMapItem.placemark.coordinate.latitude) \(selectedMapItem.placemark.coordinate.longitude)")
         
         searchBar.text = ""
         self.places.removeAll(keepCapacity: false)
@@ -165,7 +189,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         currentlyAdding = true
         drawingView.toDraw = false
         drawingView.setNeedsDisplay()
-        
+        self.searchBar.showsCancelButton = false
     }
     
     @IBAction func addButtonClicked(sender: AnyObject) {
@@ -289,14 +313,13 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         addButton.hidden = true
         currentlyAdding = false
         mapView.setUserTrackingMode(MKUserTrackingMode.FollowWithHeading, animated: true)
-        
+        println("0000000000000000000000000000000000000000000000000000")
         targetList.append(tempAnnot!)
         tempAnnot = nil
         drawingView.toDraw = true
         drawingView.setNeedsDisplay()
         updateTargets()
     }
-    
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
@@ -335,7 +358,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         
         var locDictStr = "{\"X\":\(self.userLocation.latitude),\"Y\":\(self.userLocation.longitude)}"
         
-        Alamofire.request(.GET, "http://10.180.0.129:8080/push", parameters: ["location":locDictStr,"ID":uidInt]).response({ request, response, data, error in
+        Alamofire.request(.GET, "http://40.76.88.212:8080/push", parameters: ["location":locDictStr,"ID":uidInt]).response({ request, response, data, error in
             println("Alamofire: \(request)")
             println("Alamofire: \(response)")
             println("Alamofire: \(error)")
@@ -354,7 +377,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
         drawingView.dotArray.removeAll(keepCapacity: false)
         drawingView.imgArray.removeAll(keepCapacity: false)
         
-        Alamofire.request(.GET, "http://10.180.0.129:8080/get", parameters:nil).response({ request, response, data, error in
+        Alamofire.request(.GET, "http://40.76.88.212:8080/get", parameters:nil).response({ request, response, data, error in
 
             let json = JSON(data: data!)
             
@@ -368,7 +391,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
                     self.targetList[val!] = annotPerson
                 }
                 else{
-                    print("===   \(userKey != String(self.uidInt))   ===")
+//                    print("===   \(userKey != String(self.uidInt))   ===")
                     if userKey != String(self.uidInt){
                         self.targetList.append(annotPerson)
                         self.peopleLogged[userKey] = self.targetList.count - 1
@@ -418,7 +441,7 @@ class MinimapController: UIViewController, UISearchBarDelegate, CLLocationManage
                 drawY = radius - radius * CGFloat(dist/specialVal) * CGFloat(cos(relativeAngle * (M_PI / 180.0))) + 10.0
             }
             
-//            println("\(drawX) \(drawY) || \(relativeAngle)")
+            println("\(drawX) \(drawY) || \(relativeAngle)")
             
             drawingView.dotArray.append([drawX, drawY])
             drawingView.imgArray.append(annot.img)

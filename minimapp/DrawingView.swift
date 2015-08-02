@@ -19,6 +19,7 @@ class DrawingView: UIView {
         UIColor.clearColor().setFill()
         UIRectFill(rect)
         if toDraw{
+            println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             for(var i = 0; i < dotArray.count; i++){
                 imgArray[i].drawInRect(CGRectMake(dotArray[i][0]-10.0, dotArray[i][1]-10.0, 40.0, 40.0))
             }
